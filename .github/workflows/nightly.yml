@@ -38,7 +38,7 @@ jobs:
               gtk4-devel libadwaita-devel \
               gtksourceview5-devel \
               gdk-pixbuf2-devel glib2-devel \
-              tar gzip git curl
+              git curl
 
             # Install Rust (nightly toolchain for Rust 2024 / rust-version 1.98+)
             curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly
@@ -53,20 +53,13 @@ jobs:
               exit 1
             fi
 
-            PKG_NAME="gpa-icons-animator-nightly-linux-x86_64"
-            mkdir -p "${PKG_NAME}/bin"
-            cp target/release/gpa-icons-animator "${PKG_NAME}/bin/"
-
-            tar -czvf "${PKG_NAME}.tar.gz" "${PKG_NAME}"
-            sha256sum "${PKG_NAME}.tar.gz" | awk '{print $1}' > "${PKG_NAME}.tar.gz.sha256"
+            cp target/release/gpa-icons-animator ./gpa-icons-animator
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: binary-x86_64
-          path: |
-            gpa-icons-animator-nightly-linux-x86_64.tar.gz
-            gpa-icons-animator-nightly-linux-x86_64.tar.gz.sha256
+          path: gpa-icons-animator
 
   publish:
     name: Publish Nightly
@@ -86,6 +79,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          chmod +x gpa-icons-animator
+
           # Keep only a single nightly release: delete previous nightly release and tag
           gh release delete nightly --yes || true
           git tag -d nightly || true
@@ -94,10 +89,10 @@ jobs:
           git tag nightly
           git push origin nightly
 
-          gh release create nightly *.tar.gz *.tar.gz.sha256 \
+          gh release create nightly gpa-icons-animator \
             --target "$(git rev-parse HEAD)" \
             --title "Nightly Build ($(date -u '+%Y-%m-%d'))" \
-            --notes "Latest automated Linux x86_64 build from the main branch (requires GTK 4.24 & libadwaita 1.10)."
+            --notes "Latest automated Linux x86_64 binary from the main branch (requires GTK 4.24 & libadwaita 1.10)."
 
           RELEASE_ID=$(gh release view nightly --json databaseId -q .databaseId)
           gh api --method PATCH /repos/${{ github.repository }}/releases/$RELEASE_ID -F draft=true

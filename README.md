@@ -10,7 +10,7 @@ While you can tweak states and XML manually in the UI, **the app is specifically
 
 ## Download (Linux x86_64 Nightly)
 
-- [**Download Latest Nightly Release (`x86_64` Linux)**](https://github.com/boxxy-dev/gpa-icons-animator/releases/tag/nightly) *(Requires GTK 4.24 & Libadwaita 1.10)*
+- [**Download Latest Nightly Release (`x86_64` Linux)**](https://github.com/boxxy-dev/gpa-icons-animator/releases/tag/nightly) *(Single standalone binary — requires GTK 4.24 & Libadwaita 1.10)*
 
 ## How It Works
 
@@ -23,6 +23,10 @@ While you can tweak states and XML manually in the UI, **the app is specifically
    - Every tool call from your agent immediately updates the live `GtkSvg` preview, state transition cards, 16×16 grid / X-Ray spine overlays, and `48px` / `24px` scale comparison.
 4. **Save to Your Library or Export:**
    - Save finished icons to your custom library folders (`~/.config/gpa-icons-animator/libs/my-icons`) or export standalone `.gpa` files.
+
+## Bundled Icon Library
+
+All 1,100+ symbolic icons in the **Icon Dev Kit** library are bundled directly inside the binary from the [**GNOME Icon Development Kit**](https://gitlab.gnome.org/Teams/Design/icon-development-kit).
 
 ## Build & Run from Source
 

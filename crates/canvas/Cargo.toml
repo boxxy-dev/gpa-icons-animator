@@ -1,0 +1,20 @@
+[package]
+name = "gpa-canvas"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+description.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+glib.workspace = true
+gpa-core.workspace = true
+gpa-icon-library.workspace = true
+gsk4.workspace = true
+gtk4.workspace = true
+libadwaita.workspace = true
+log.workspace = true

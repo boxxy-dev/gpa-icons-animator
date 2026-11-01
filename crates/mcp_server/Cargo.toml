@@ -1,0 +1,28 @@
+[package]
+name = "gpa-mcp-server"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+description.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow.workspace = true
+arc-swap.workspace = true
+async-channel.workspace = true
+bytes.workspace = true
+gpa-core.workspace = true
+gpa-icon-library.workspace = true
+gpa-sys-utils.workspace = true
+http.workspace = true
+http-body-util.workspace = true
+log.workspace = true
+rmcp.workspace = true
+schemars.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tokio.workspace = true

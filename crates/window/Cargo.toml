@@ -1,0 +1,25 @@
+[package]
+name = "gpa-window"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+description.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+async-channel.workspace = true
+gio.workspace = true
+glib.workspace = true
+gpa-canvas.workspace = true
+gpa-core.workspace = true
+gpa-icon-library.workspace = true
+gpa-mcp-server.workspace = true
+gpa-sys-utils.workspace = true
+gtk4.workspace = true
+libadwaita.workspace = true
+log.workspace = true
+sourceview5.workspace = true

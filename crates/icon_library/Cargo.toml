@@ -1,0 +1,21 @@
+[package]
+name = "gpa-icon-library"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+description.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow.workspace = true
+frizbee.workspace = true
+gpa-core.workspace = true
+gpa-sys-utils.workspace = true
+serde.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

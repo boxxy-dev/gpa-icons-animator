@@ -1,0 +1,30 @@
+[package]
+name = "gpa-app"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+description.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow.workspace = true
+env_logger.workspace = true
+gio.workspace = true
+glib.workspace = true
+gpa-sys-utils.workspace = true
+gpa-window.workspace = true
+gtk4.workspace = true
+libadwaita.workspace = true
+log.workspace = true
+sourceview5.workspace = true
+
+[build-dependencies]
+glib-build-tools.workspace = true
+
+[[bin]]
+name = "gpa-icons-animator"
+path = "src/main.rs"

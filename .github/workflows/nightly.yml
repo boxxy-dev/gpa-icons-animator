@@ -1,0 +1,104 @@
+name: Nightly Build
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
+jobs:
+  build:
+    name: Build (x86_64)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get short SHA
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Build in Fedora Rawhide Container
+        uses: addnab/docker-run-action@v3
+        with:
+          image: fedora:rawhide
+          options: --platform linux/x86_64 -v ${{ github.workspace }}:/workspace -e GIT_HASH=${{ env.sha_short }}
+          run: |
+            set -euo pipefail
+
+            dnf install -y \
+              gcc pkgconfig binutils \
+              gtk4-devel libadwaita-devel \
+              gtksourceview5-devel \
+              gdk-pixbuf2-devel glib2-devel \
+              tar gzip git curl
+
+            # Install Rust (nightly toolchain for Rust 2024 / rust-version 1.98+)
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly
+            source "$HOME/.cargo/env"
+
+            cd /workspace
+
+            cargo build --release --locked
+
+            if [ ! -x "target/release/gpa-icons-animator" ]; then
+              echo "Error: target/release/gpa-icons-animator not found"
+              exit 1
+            fi
+
+            PKG_NAME="gpa-icons-animator-nightly-linux-x86_64"
+            mkdir -p "${PKG_NAME}/bin"
+            cp target/release/gpa-icons-animator "${PKG_NAME}/bin/"
+
+            tar -czvf "${PKG_NAME}.tar.gz" "${PKG_NAME}"
+            sha256sum "${PKG_NAME}.tar.gz" | awk '{print $1}' > "${PKG_NAME}.tar.gz.sha256"
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: binary-x86_64
+          path: |
+            gpa-icons-animator-nightly-linux-x86_64.tar.gz
+            gpa-icons-animator-nightly-linux-x86_64.tar.gz.sha256
+
+  publish:
+    name: Publish Nightly
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          pattern: binary-*
+          merge-multiple: true
+
+      - name: Update Single Nightly Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Keep only a single nightly release: delete previous nightly release and tag
+          gh release delete nightly --yes || true
+          git tag -d nightly || true
+          git push origin :refs/tags/nightly || true
+
+          git tag nightly
+          git push origin nightly
+
+          gh release create nightly *.tar.gz *.tar.gz.sha256 \
+            --target "$(git rev-parse HEAD)" \
+            --title "Nightly Build ($(date -u '+%Y-%m-%d'))" \
+            --notes "Latest automated Linux x86_64 build from the main branch (requires GTK 4.24 & libadwaita 1.10)."
+
+          RELEASE_ID=$(gh release view nightly --json databaseId -q .databaseId)
+          gh api --method PATCH /repos/${{ github.repository }}/releases/$RELEASE_ID -F draft=true
+          gh api --method PATCH /repos/${{ github.repository }}/releases/$RELEASE_ID -F draft=false

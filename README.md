@@ -8,6 +8,10 @@
 
 While you can tweak states and XML manually in the UI, **the app is specifically built to be driven by AI agents via its embedded MCP server** — best used with [**Boxxy**](https://github.com/boxxy-dev/boxxy) :)
 
+## Download (Linux x86_64 Nightly)
+
+- [**Download Latest Nightly Release (`x86_64` Linux)**](https://github.com/boxxy-dev/gpa-icons-animator/releases/tag/nightly) *(Requires GTK 4.24 & Libadwaita 1.10)*
+
 ## How It Works
 
 1. **Connect Your Agent via MCP (`http://127.0.0.1:44820/mcp`):**
@@ -20,7 +24,7 @@ While you can tweak states and XML manually in the UI, **the app is specifically
 4. **Save to Your Library or Export:**
    - Save finished icons to your custom library folders (`~/.config/gpa-icons-animator/libs/my-icons`) or export standalone `.gpa` files.
 
-## Run
+## Build & Run from Source
 
 ```bash
 cargo run --release
